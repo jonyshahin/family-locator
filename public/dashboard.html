@@ -193,6 +193,14 @@
     .trail-toggle:hover { background:rgba(255,255,255,0.1); }
     .trail-toggle.active { background:rgba(56,189,248,0.15); border-color:rgba(56,189,248,0.3); color:var(--accent); }
 
+    .stop-btn {
+      font-size:10px; padding:3px 8px; border-radius:6px;
+      background:rgba(244,63,94,0.1); border:1px solid rgba(244,63,94,0.25);
+      color:var(--danger); cursor:pointer; font-family:inherit; font-weight:500;
+      transition:background 0.2s;
+    }
+    .stop-btn:hover { background:rgba(244,63,94,0.2); }
+
     .no-members { text-align:center; padding:30px 16px; color:var(--muted); font-size:14px; }
     .no-members .icon { font-size:32px; margin-bottom:8px; }
 
@@ -479,6 +487,7 @@
             <span class="member-lastseen" style="color:${lastSeenColor}" data-ts="${loc.timestamp}">${timeAgo(loc.timestamp)}</span>
             ${loc.accuracy ? `<span class="member-accuracy">${Math.round(loc.accuracy)}m</span>` : ''}
             <button class="trail-toggle ${trailOn ? 'active' : ''}" onclick="event.stopPropagation();toggleTrail('${loc.userId}')">${trailOn ? 'Hide trail' : 'Show trail'}</button>
+            ${!stale ? `<button class="stop-btn" onclick="event.stopPropagation();stopTracking('${loc.userId}','${loc.name}')">Stop</button>` : ''}
           </div>
         </div>`;
       }).join('');
@@ -490,6 +499,11 @@
         el.textContent = timeAgo(parseInt(el.dataset.ts));
       });
     }, 1000);
+
+    function stopTracking(uid, name) {
+      socket.emit('force-stop', uid);
+      showToast(`Stopped tracking for ${name}`);
+    }
 
     function flyTo(uid) {
       if (markers[uid]) { map.flyTo(markers[uid].getLatLng(), 16, { duration: 0.7 }); markers[uid].openPopup(); }

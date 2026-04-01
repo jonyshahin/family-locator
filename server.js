@@ -264,6 +264,17 @@ io.on('connection', (socket) => {
     io.emit('all-locations', Array.from(locations.values()));
   });
 
+  socket.on('force-stop', (userId) => {
+    if (typeof userId !== 'string' || userId.length > 100) return;
+    io.emit('force-stop', userId);
+    if (locations.has(userId)) {
+      const loc = locations.get(userId);
+      loc.offline = true;
+      io.emit('all-locations', Array.from(locations.values()));
+    }
+    console.log(`[WS] Force-stopped tracking for: ${userId}`);
+  });
+
   socket.on('user-offline', (userId) => {
     if (typeof userId !== 'string') return;
     if (locations.has(userId)) {

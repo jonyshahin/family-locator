@@ -43,6 +43,15 @@
       try { navigator.wakeLock?.request('screen').then(l => { wakeLock = l; }); } catch(e) {}
     }
 
+    socket.on('force-stop', (targetId) => {
+      if (targetId === userId) {
+        if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+        if (wakeLock) { try { wakeLock.release(); } catch(e) {} wakeLock = null; }
+        socket.emit('user-offline', userId);
+        socket.disconnect();
+      }
+    });
+
     setInterval(() => { if (socket.connected) socket.emit('ping-alive'); }, 25000);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && !wakeLock) try { navigator.wakeLock?.request('screen').then(l => { wakeLock = l; }); } catch(e) {} });
     window.addEventListener('beforeunload', () => { if (socket.connected) socket.emit('user-offline', userId); });
